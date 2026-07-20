@@ -159,12 +159,13 @@ generations
    Realizuje tę samą zasadę "model wybrany raz, powtarzalny", bez potrzeby budowania
    galerii ani bazy danych.
 
-**Faza 2 — opis**
-3. ✅ Backend gotowy: `POST /api/extract-tag` (zdjęcie metki → JSON: marka/rozmiar/skład/uwagi,
-   model `gemini-3.1-flash-lite` — starsze modele z darmowym limitem dla nowych kont
-   zostały wycofane). Formularz do poprawy danych na froncie — jeszcze do zrobienia.
-4. ✅ Backend gotowy: `POST /api/generate-description` (zdjęcie + dane z metki + dodatkowe
-   info → gotowy opis pod Vinted). Podłączenie do frontendu — jeszcze do zrobienia.
+**Faza 2 — opis** ✅ Gotowe całościowo (backend + frontend)
+3. `POST /api/extract-tag` (model `gemini-3.1-flash-lite` — starsze modele z darmowym
+   limitem dla nowych kont zostały wycofane) + opcjonalny dropzone na metkę z auto-OCR
+   i edytowalnymi polami marka/rozmiar/skład.
+4. `POST /api/generate-description` + edytowalny opis w wyniku, z przyciskiem kopiowania.
+   Generacja zdjęcia (fal.ai) i opisu (Gemini) odpalają się równolegle po kliknięciu
+   "Generuj".
 
 **Faza 3 — użyteczność**
 5. Baza danych + archiwum (żeby nie gubić wygenerowanych zdjęć).
