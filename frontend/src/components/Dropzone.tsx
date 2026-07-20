@@ -7,6 +7,7 @@ interface DropzoneProps {
   previewUrl: string | null;
   onSelect: (file: File) => void;
   onClear: () => void;
+  compact?: boolean;
 }
 
 function UploadIcon() {
@@ -18,7 +19,7 @@ function UploadIcon() {
   );
 }
 
-export function Dropzone({ label, hint, file, previewUrl, onSelect, onClear }: DropzoneProps) {
+export function Dropzone({ label, hint, file, previewUrl, onSelect, onClear, compact }: DropzoneProps) {
   const [dragActive, setDragActive] = useState(false);
 
   function handleDrop(e: DragEvent<HTMLLabelElement>) {
@@ -30,7 +31,7 @@ export function Dropzone({ label, hint, file, previewUrl, onSelect, onClear }: D
 
   return (
     <label
-      className={`dropzone${dragActive ? " drag-active" : ""}`}
+      className={`dropzone${compact ? " dropzone-compact" : ""}${dragActive ? " drag-active" : ""}`}
       onDragOver={(e) => {
         e.preventDefault();
         setDragActive(true);

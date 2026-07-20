@@ -234,6 +234,128 @@
   background: rgba(0, 0, 0, 0.75);
 }
 
+.dropzone-compact {
+  aspect-ratio: auto;
+  height: 84px;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.dropzone-compact .dropzone-icon {
+  width: 20px;
+  height: 20px;
+}
+
+.dropzone-compact .dropzone-label {
+  font-size: 12px;
+}
+
+.dropzone-compact .dropzone-hint {
+  display: none;
+}
+
+.dropzone-compact .dropzone-preview img {
+  object-fit: cover;
+}
+
+.tag-section {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tag-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--text-h);
+}
+
+.tag-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-dim);
+}
+
+.tag-status-ok {
+  color: var(--accent);
+}
+
+.spinner-dark {
+  border-color: var(--border-strong);
+  border-top-color: var(--accent);
+}
+
+.tag-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+  min-width: 0;
+}
+
+@media (max-width: 420px) {
+  .tag-fields {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tag-fields input,
+.extra-info {
+  width: 100%;
+  min-width: 0;
+  font-family: inherit;
+  font-size: 13px;
+  padding: 9px 11px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--text-h);
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+
+.tag-fields input:focus,
+.extra-info:focus,
+.description-textarea:focus {
+  border-color: var(--accent);
+}
+
+.extra-info {
+  resize: vertical;
+  min-height: 44px;
+}
+
+.description-block {
+  margin-top: 22px;
+  padding-top: 22px;
+  border-top: 1px solid var(--border);
+  animation: reveal 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.description-textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 13.5px;
+  line-height: 1.6;
+  padding: 12px 14px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border-strong);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text-h);
+  outline: none;
+  resize: vertical;
+  margin-bottom: 10px;
+}
+
 .generate-btn {
   width: 100%;
   border: none;
