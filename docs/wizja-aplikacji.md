@@ -160,8 +160,11 @@ generations
    galerii ani bazy danych.
 
 **Faza 2 — opis**
-3. Upload zdjęcia metki → OCR/ekstrakcja danych → formularz do poprawy.
-4. Generacja opisu na bazie zebranych danych.
+3. ✅ Backend gotowy: `POST /api/extract-tag` (zdjęcie metki → JSON: marka/rozmiar/skład/uwagi,
+   model `gemini-3.1-flash-lite` — starsze modele z darmowym limitem dla nowych kont
+   zostały wycofane). Formularz do poprawy danych na froncie — jeszcze do zrobienia.
+4. ✅ Backend gotowy: `POST /api/generate-description` (zdjęcie + dane z metki + dodatkowe
+   info → gotowy opis pod Vinted). Podłączenie do frontendu — jeszcze do zrobienia.
 
 **Faza 3 — użyteczność**
 5. Baza danych + archiwum (żeby nie gubić wygenerowanych zdjęć).
