@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Dropzone } from "./components/Dropzone";
+import { clearDefaultModel, hasDefaultModel, loadDefaultModel, saveDefaultModel } from "./lib/defaultModel";
 import "./App.css";
 
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8080";
@@ -25,12 +26,38 @@ function useObjectUrl(file: File | null) {
 function App() {
   const [modelFile, setModelFile] = useState<File | null>(null);
   const [garmentFile, setGarmentFile] = useState<File | null>(null);
+  const [rememberModel, setRememberModel] = useState(hasDefaultModel);
   const [status, setStatus] = useState<Status>("idle");
   const [error, setError] = useState<string | null>(null);
   const [resultImageUrl, setResultImageUrl] = useState<string | null>(null);
 
   const modelPreview = useObjectUrl(modelFile);
   const garmentPreview = useObjectUrl(garmentFile);
+
+  useEffect(() => {
+    const saved = loadDefaultModel();
+    if (saved) setModelFile(saved);
+  }, []);
+
+  function handleModelSelect(file: File) {
+    setModelFile(file);
+    if (rememberModel) void saveDefaultModel(file);
+  }
+
+  function handleModelClear() {
+    setModelFile(null);
+    setRememberModel(false);
+    clearDefaultModel();
+  }
+
+  function handleRememberToggle(checked: boolean) {
+    setRememberModel(checked);
+    if (checked && modelFile) {
+      void saveDefaultModel(modelFile);
+    } else if (!checked) {
+      clearDefaultModel();
+    }
+  }
 
   async function handleGenerate() {
     if (!modelFile || !garmentFile) return;
@@ -89,8 +116,8 @@ function App() {
             hint="Zdjęcie osoby"
             file={modelFile}
             previewUrl={modelPreview}
-            onSelect={setModelFile}
-            onClear={() => setModelFile(null)}
+            onSelect={handleModelSelect}
+            onClear={handleModelClear}
           />
           <Dropzone
             label="Ubranie"
@@ -101,6 +128,17 @@ function App() {
             onClear={() => setGarmentFile(null)}
           />
         </div>
+
+        {modelFile && (
+          <label className="remember-toggle">
+            <input
+              type="checkbox"
+              checked={rememberModel}
+              onChange={(e) => handleRememberToggle(e.target.checked)}
+            />
+            Zapamiętaj to zdjęcie modela na następny raz
+          </label>
+        )}
 
         <button className="generate-btn" disabled={!canGenerate} onClick={handleGenerate}>
           {status === "loading" ? (
