@@ -159,6 +159,18 @@ generations
    Realizuje tę samą zasadę "model wybrany raz, powtarzalny", bez potrzeby budowania
    galerii ani bazy danych.
 
+**Pomysł do zrobienia (kolejna sesja):** upload zdjęcia modela jako opcjonalny —
+zamiast wymuszać wgranie własnego zdjęcia, wybór "kobieta" / "mężczyzna", a domyślne
+zdjęcie modela dobierane automatycznie (bez uploadu). Technicznie proste (kilka
+zmian w UI + backendzie), ale wymaga **dwóch bazowych zdjęć modeli** do zbudowania —
+ten sam problem licencyjny co przy pierwotnym pomyśle galerii. Dwie opcje: (a)
+wygenerować syntetyczne zdjęcia AI (nie prawdziwe osoby, brak problemu z prawami) —
+jednorazowy, mały koszt (2 obrazy); (b) dostarczyć własne 1-2 zdjęcia z prawami do
+użycia. Rekomendacja: (a), bo nie zależy od znalezienia licencjonowanych stocków.
+
+**Faza 3 (baza danych + archiwum) — odłożona na razie**, wraca do tematu gdy będzie
+potrzebna.
+
 **Faza 2 — opis** ✅ Gotowe całościowo (backend + frontend)
 3. `POST /api/extract-tag` (model `gemini-3.1-flash-lite` — starsze modele z darmowym
    limitem dla nowych kont zostały wycofane) + opcjonalny dropzone na metkę z auto-OCR
