@@ -153,8 +153,11 @@ generations
 1. Upload zdjęcia ubrania → wywołanie fal.ai (FASHN) → wyświetlenie wyniku. Bez logowania,
    bez bazy, wszystko w jednej sesji przeglądarki. Cel: sprawdzić jakość generacji na
    Twoich prawdziwych ubraniach zanim zainwestujesz czas w resztę.
-2. Jeśli jakość Cię przekona → dodaj wybór modela z małej galerii (2-3 modele) + opcję
-   "użyj mojego zdjęcia".
+2. ✅ Zaimplementowane inaczej niż pierwotnie planowano: zamiast galerii 2-3 gotowych
+   modeli (brak licencjonowanych zdjęć do użycia) — zdjęcie modela zapamiętywane jest
+   w `localStorage` przeglądarki i wczytuje się automatycznie przy kolejnych wizytach.
+   Realizuje tę samą zasadę "model wybrany raz, powtarzalny", bez potrzeby budowania
+   galerii ani bazy danych.
 
 **Faza 2 — opis**
 3. Upload zdjęcia metki → OCR/ekstrakcja danych → formularz do poprawy.
