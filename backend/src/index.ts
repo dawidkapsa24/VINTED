@@ -1,8 +1,9 @@
-import Fastify from "fastify";
+import Fastify, { type FastifyRequest } from "fastify";
 import cors from "@fastify/cors";
 import multipart from "@fastify/multipart";
 import { fal } from "@fal-ai/client";
 import { env } from "./env.js";
+import { extractTagData, generateDescription, type TagData } from "./gemini.js";
 
 const app = Fastify({ logger: true });
 
@@ -10,6 +11,31 @@ await app.register(cors, { origin: true });
 await app.register(multipart, {
   limits: { fileSize: 10 * 1024 * 1024 },
 });
+
+interface UploadedFile {
+  buffer: Buffer;
+  filename: string;
+  mimetype: string;
+}
+
+async function parseMultipart(request: FastifyRequest) {
+  const files: Record<string, UploadedFile> = {};
+  const fields: Record<string, string> = {};
+
+  for await (const part of request.parts()) {
+    if (part.type === "file") {
+      files[part.fieldname] = {
+        buffer: await part.toBuffer(),
+        filename: part.filename,
+        mimetype: part.mimetype,
+      };
+    } else {
+      fields[part.fieldname] = String(part.value);
+    }
+  }
+
+  return { files, fields };
+}
 
 app.get("/api/health", async () => ({ ok: true }));
 
@@ -21,18 +47,7 @@ app.post("/api/tryon", async (request, reply) => {
   }
   fal.config({ credentials: env.falKey });
 
-  const parts = request.parts();
-  const files: Record<string, { buffer: Buffer; filename: string; mimetype: string }> = {};
-
-  for await (const part of parts) {
-    if (part.type === "file") {
-      files[part.fieldname] = {
-        buffer: await part.toBuffer(),
-        filename: part.filename,
-        mimetype: part.mimetype,
-      };
-    }
-  }
+  const { files } = await parseMultipart(request);
 
   const modelFile = files["model_image"];
   const garmentFile = files["garment_image"];
@@ -69,6 +84,63 @@ app.post("/api/tryon", async (request, reply) => {
   } catch (err) {
     request.log.error(err);
     return reply.status(502).send({ error: "Generacja nie powiodła się.", detail: `${err}` });
+  }
+});
+
+app.post("/api/extract-tag", async (request, reply) => {
+  if (!env.geminiKey) {
+    return reply.status(500).send({
+      error: "GEMINI_API_KEY nie jest ustawiony na backendzie. Dodaj go do backend/.env.",
+    });
+  }
+
+  const { files } = await parseMultipart(request);
+  const tagFile = files["tag_image"];
+
+  if (!tagFile) {
+    return reply.status(400).send({ error: "Wymagany plik: tag_image (multipart/form-data)." });
+  }
+
+  try {
+    const tagData = await extractTagData(tagFile.buffer.toString("base64"), tagFile.mimetype);
+    return { tagData };
+  } catch (err) {
+    request.log.error(err);
+    return reply.status(502).send({ error: "Odczyt metki nie powiódł się.", detail: `${err}` });
+  }
+});
+
+app.post("/api/generate-description", async (request, reply) => {
+  if (!env.geminiKey) {
+    return reply.status(500).send({
+      error: "GEMINI_API_KEY nie jest ustawiony na backendzie. Dodaj go do backend/.env.",
+    });
+  }
+
+  const { files, fields } = await parseMultipart(request);
+  const garmentFile = files["garment_image"];
+
+  if (!garmentFile) {
+    return reply.status(400).send({ error: "Wymagany plik: garment_image (multipart/form-data)." });
+  }
+
+  const tagData: Partial<TagData> = {
+    marka: fields["marka"] || null,
+    rozmiar: fields["rozmiar"] || null,
+    sklad: fields["sklad"] || null,
+  };
+
+  try {
+    const description = await generateDescription({
+      garmentImageBase64: garmentFile.buffer.toString("base64"),
+      garmentMimeType: garmentFile.mimetype,
+      tagData,
+      extraInfo: fields["extra_info"] ?? "",
+    });
+    return { description };
+  } catch (err) {
+    request.log.error(err);
+    return reply.status(502).send({ error: "Generacja opisu nie powiodła się.", detail: `${err}` });
   }
 });
 
