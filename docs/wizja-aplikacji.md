@@ -58,7 +58,7 @@ domyślnie używane przy każdej kolejnej generacji, bez ponownego uploadu.
                     │             │              │
                     v             v              v
             ┌───────────┐ ┌─────────────┐ ┌──────────────┐
-            │ fal.ai     │ │ Claude API   │ │ Baza danych   │
+            │ fal.ai     │ │ Gemini API   │ │ Baza danych   │
             │ (virtual   │ │ (OCR metki + │ │ Postgres/     │
             │ try-on)    │ │ generacja    │ │ Firestore     │
             │            │ │ opisu)       │ │ (metadata,    │
@@ -102,9 +102,15 @@ const result = await fal.subscribe("fal-ai/fashn/tryon/v1.6", {
 
 ### b) OCR metki + generacja opisu
 
-Użyj Claude API (masz już z tym doświadczenie z projektu głosowego):
+Użyj **Gemini API** (Google AI Studio) — darmowy tier, obsługuje obrazy i tekst, wystarczający
+przy skali osobistego użytku. Zastąpiono nim Claude API z pierwotnego planu, żeby uniknąć
+kosztu (Anthropic wymaga min. $5 doładowania, Gemini nie).
 
-1. **Odczyt metki** — zdjęcie metki jako obraz w wiadomości do Claude, prompt z instrukcją
+Uwaga: darmowy tier Gemini zwykle zastrzega prawo do wykorzystania danych do trenowania
+modeli (w przeciwieństwie do płatnego tieru) — przy zdjęciach ubrań/metek to niewielkie
+ryzyko prywatności, ale warto o tym wiedzieć.
+
+1. **Odczyt metki** — zdjęcie metki jako obraz w wiadomości do Gemini, prompt z instrukcją
    zwrotu strukturalnego JSON:
    ```json
    { "marka": "Zara", "rozmiar": "M", "sklad": "65% bawełna, 35% poliester", "uwagi": null }
@@ -166,12 +172,13 @@ dla butików B2B, sugestii cenowej — to wszystko etap 2+, po walidacji na sobi
 
 ## 6. Koszt jednostkowy (orientacyjnie)
 
-- Virtual try-on (fal.ai/FASHN): ~$0.075/generację
-- OCR metki (Claude, obraz + krótki tekst): ułamek centa
-- Generacja opisu (Claude, tekst): ułamek centa
+- Virtual try-on (fal.ai/FASHN): ~$0.075/generację (płatne, wymaga doładowania salda)
+- OCR metki (Gemini API, obraz + krótki tekst): $0, darmowy tier
+- Generacja opisu (Gemini API, tekst): $0, darmowy tier
 
-Przy użytku personalnym (kilkanaście-kilkadziesiąt generacji/miesiąc) to praktycznie
-grosze — nie ma sensu na tym etapie myśleć o modelu cenowym, dopiero przy B2B.
+Przy użytku personalnym (kilkanaście-kilkadziesiąt generacji/miesiąc) jedynym realnym
+kosztem zostaje fal.ai — kilka dolarów salda starczy na długo. Nie ma sensu na tym etapie
+myśleć o modelu cenowym, dopiero przy B2B.
 
 ---
 
