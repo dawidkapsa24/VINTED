@@ -4,6 +4,7 @@ import multipart from "@fastify/multipart";
 import { fal } from "@fal-ai/client";
 import { env } from "./env.js";
 import { extractTagData, generateDescription, type TagData } from "./gemini.js";
+import { getRandomDefaultModelUrl } from "./defaultModels.js";
 
 const app = Fastify({ logger: true });
 
@@ -52,19 +53,21 @@ app.post("/api/tryon", async (request, reply) => {
   const modelFile = files["model_image"];
   const garmentFile = files["garment_image"];
 
-  if (!modelFile || !garmentFile) {
+  if (!garmentFile) {
     return reply.status(400).send({
-      error: "Wymagane pliki: model_image oraz garment_image (multipart/form-data).",
+      error: "Wymagany plik: garment_image (multipart/form-data).",
     });
   }
 
   try {
     const [modelImageUrl, garmentImageUrl] = await Promise.all([
-      fal.storage.upload(
-        new File([new Uint8Array(modelFile.buffer)], modelFile.filename, {
-          type: modelFile.mimetype,
-        })
-      ),
+      modelFile
+        ? fal.storage.upload(
+            new File([new Uint8Array(modelFile.buffer)], modelFile.filename, {
+              type: modelFile.mimetype,
+            })
+          )
+        : getRandomDefaultModelUrl(),
       fal.storage.upload(
         new File([new Uint8Array(garmentFile.buffer)], garmentFile.filename, {
           type: garmentFile.mimetype,

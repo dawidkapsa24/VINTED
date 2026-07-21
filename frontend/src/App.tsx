@@ -35,6 +35,7 @@ function App() {
   const [modelFile, setModelFile] = useState<File | null>(null);
   const [garmentFile, setGarmentFile] = useState<File | null>(null);
   const [rememberModel, setRememberModel] = useState(hasDefaultModel);
+  const [showModelSection, setShowModelSection] = useState(hasDefaultModel);
 
   const [imageStatus, setImageStatus] = useState<Status>("idle");
   const [imageError, setImageError] = useState<string | null>(null);
@@ -69,6 +70,14 @@ function App() {
     setModelFile(null);
     setRememberModel(false);
     clearDefaultModel();
+  }
+
+  function handleToggleModelSection() {
+    setShowModelSection((open) => {
+      const next = !open;
+      if (!next) handleModelClear();
+      return next;
+    });
   }
 
   function handleRememberToggle(checked: boolean) {
@@ -113,13 +122,13 @@ function App() {
   }
 
   async function runTryon() {
-    if (!modelFile || !garmentFile) return;
+    if (!garmentFile) return;
     setImageStatus("loading");
     setImageError(null);
     setResultImageUrl(null);
 
     const formData = new FormData();
-    formData.append("model_image", modelFile);
+    if (modelFile) formData.append("model_image", modelFile);
     formData.append("garment_image", garmentFile);
 
     try {
@@ -165,7 +174,7 @@ function App() {
   }
 
   async function handleGenerate() {
-    if (!modelFile || !garmentFile) return;
+    if (!garmentFile) return;
     await Promise.all([runTryon(), runDescription()]);
   }
 
@@ -176,7 +185,7 @@ function App() {
   }
 
   const isGenerating = imageStatus === "loading" || descriptionStatus === "loading";
-  const canGenerate = Boolean(modelFile && garmentFile) && !isGenerating;
+  const canGenerate = Boolean(garmentFile) && !isGenerating;
 
   return (
     <div className="page">
@@ -189,19 +198,11 @@ function App() {
           <h1>Vougly+</h1>
         </div>
         <p className="subtitle">
-          Wgraj zdjęcie modela i ubrania — AI wygeneruje fotorealistyczną przymiarkę i opis pod Vinted w
-          kilkanaście sekund.
+          Wgraj zdjęcie ubrania — AI dobierze model automatycznie i wygeneruje fotorealistyczną
+          przymiarkę oraz opis pod Vinted w kilkanaście sekund.
         </p>
 
-        <div className="dropzones">
-          <Dropzone
-            label="Model"
-            hint="Zdjęcie osoby"
-            file={modelFile}
-            previewUrl={modelPreview}
-            onSelect={handleModelSelect}
-            onClear={handleModelClear}
-          />
+        <div className="dropzones dropzones-single">
           <Dropzone
             label="Ubranie"
             hint="Zdjęcie produktu"
@@ -212,15 +213,40 @@ function App() {
           />
         </div>
 
-        {modelFile && (
-          <label className="remember-toggle">
-            <input
-              type="checkbox"
-              checked={rememberModel}
-              onChange={(e) => handleRememberToggle(e.target.checked)}
+        {!showModelSection && (
+          <button type="button" className="link-toggle" onClick={handleToggleModelSection}>
+            + Użyj własnego zdjęcia jako modela (opcjonalnie)
+          </button>
+        )}
+
+        {showModelSection && (
+          <div className="model-section">
+            <div className="tag-section-header">
+              <span>Model (opcjonalnie)</span>
+              <button type="button" className="link-toggle link-toggle-inline" onClick={handleToggleModelSection}>
+                Użyj domyślnego
+              </button>
+            </div>
+            <Dropzone
+              compact
+              label="Zdjęcie modela"
+              hint="Własne zdjęcie"
+              file={modelFile}
+              previewUrl={modelPreview}
+              onSelect={handleModelSelect}
+              onClear={handleModelClear}
             />
-            Zapamiętaj to zdjęcie modela na następny raz
-          </label>
+            {modelFile && (
+              <label className="remember-toggle">
+                <input
+                  type="checkbox"
+                  checked={rememberModel}
+                  onChange={(e) => handleRememberToggle(e.target.checked)}
+                />
+                Zapamiętaj to zdjęcie modela na następny raz
+              </label>
+            )}
+          </div>
         )}
 
         <div className="tag-section">
