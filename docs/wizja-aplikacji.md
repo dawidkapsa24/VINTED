@@ -153,20 +153,15 @@ generations
 1. Upload zdjęcia ubrania → wywołanie fal.ai (FASHN) → wyświetlenie wyniku. Bez logowania,
    bez bazy, wszystko w jednej sesji przeglądarki. Cel: sprawdzić jakość generacji na
    Twoich prawdziwych ubraniach zanim zainwestujesz czas w resztę.
-2. ✅ Zaimplementowane inaczej niż pierwotnie planowano: zamiast galerii 2-3 gotowych
-   modeli (brak licencjonowanych zdjęć do użycia) — zdjęcie modela zapamiętywane jest
-   w `localStorage` przeglądarki i wczytuje się automatycznie przy kolejnych wizytach.
-   Realizuje tę samą zasadę "model wybrany raz, powtarzalny", bez potrzeby budowania
-   galerii ani bazy danych.
-
-**Pomysł do zrobienia (kolejna sesja):** upload zdjęcia modela jako opcjonalny —
-zamiast wymuszać wgranie własnego zdjęcia, wybór "kobieta" / "mężczyzna", a domyślne
-zdjęcie modela dobierane automatycznie (bez uploadu). Technicznie proste (kilka
-zmian w UI + backendzie), ale wymaga **dwóch bazowych zdjęć modeli** do zbudowania —
-ten sam problem licencyjny co przy pierwotnym pomyśle galerii. Dwie opcje: (a)
-wygenerować syntetyczne zdjęcia AI (nie prawdziwe osoby, brak problemu z prawami) —
-jednorazowy, mały koszt (2 obrazy); (b) dostarczyć własne 1-2 zdjęcia z prawami do
-użycia. Rekomendacja: (a), bo nie zależy od znalezienia licencjonowanych stocków.
+2. ✅ Zaimplementowane inaczej niż pierwotnie planowano, dwuetapowo:
+   - Najpierw: zdjęcie modela zapamiętywane w `localStorage` przeglądarki (bez bazy danych).
+   - Docelowo: **zdjęcie modela jest w pełni opcjonalne**. User wgrywa tylko ubranie;
+     jeśli nie poda własnego zdjęcia modela, backend losuje jedno z 4 wbudowanych
+     zdjęć (`backend/assets/default-models/`, 2 męskie + 2 żeńskie). Zdjęcia są
+     syntetyczne (wygenerowane `fal-ai/flux/schnell`, ~$0.003-0.01/szt.) — nie
+     prawdziwe osoby, więc bez problemu licencyjnego. Upload własnego zdjęcia modela
+     zostaje dostępny za przełącznikiem "Użyj własnego zdjęcia jako modela", z opcją
+     zapamiętania go na kolejne razy.
 
 **Faza 3 (baza danych + archiwum) — odłożona na razie**, wraca do tematu gdy będzie
 potrzebna.
