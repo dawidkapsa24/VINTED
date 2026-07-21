@@ -8,8 +8,10 @@ const DEFAULT_MODELS_DIR = path.join(__dirname, "..", "assets", "default-models"
 
 const uploadCache = new Map<string, string>();
 
-function listDefaultModelFiles(): string[] {
-  return readdirSync(DEFAULT_MODELS_DIR).filter((f) => /\.(jpe?g|png|webp)$/i.test(f));
+function listDefaultModelFiles(gender?: "male" | "female"): string[] {
+  const all = readdirSync(DEFAULT_MODELS_DIR).filter((f) => /\.(jpe?g|png|webp)$/i.test(f));
+  if (!gender) return all;
+  return all.filter((f) => f.startsWith(`${gender}-`));
 }
 
 function mimeTypeFor(filename: string): string {
@@ -18,11 +20,14 @@ function mimeTypeFor(filename: string): string {
   return "image/jpeg";
 }
 
-/** Losuje jedno z domyślnych zdjęć modeli (backend/assets/default-models) i zwraca jego URL na fal.storage. */
-export async function getRandomDefaultModelUrl(): Promise<string> {
-  const files = listDefaultModelFiles();
+/**
+ * Losuje jedno z domyślnych zdjęć modeli (backend/assets/default-models) i zwraca jego URL
+ * na fal.storage. Opcjonalnie ograniczone do jednej płci (prefiks nazwy pliku: male- lub female-).
+ */
+export async function getRandomDefaultModelUrl(gender?: "male" | "female"): Promise<string> {
+  const files = listDefaultModelFiles(gender);
   if (files.length === 0) {
-    throw new Error("Brak domyślnych zdjęć modeli w backend/assets/default-models.");
+    throw new Error("Brak domyślnych zdjęć modeli dla wybranej płci w backend/assets/default-models.");
   }
 
   const filename = files[Math.floor(Math.random() * files.length)];

@@ -6,6 +6,7 @@ import "./App.css";
 const BACKEND_URL = import.meta.env.VITE_BACKEND_URL ?? "http://localhost:8080";
 
 type Status = "idle" | "loading" | "done" | "error";
+type ModelGender = "any" | "female" | "male";
 
 interface TagFields {
   marka: string;
@@ -36,6 +37,7 @@ function App() {
   const [garmentFile, setGarmentFile] = useState<File | null>(null);
   const [rememberModel, setRememberModel] = useState(hasDefaultModel);
   const [showModelSection, setShowModelSection] = useState(hasDefaultModel);
+  const [modelGender, setModelGender] = useState<ModelGender>("any");
 
   const [imageStatus, setImageStatus] = useState<Status>("idle");
   const [imageError, setImageError] = useState<string | null>(null);
@@ -128,7 +130,11 @@ function App() {
     setResultImageUrl(null);
 
     const formData = new FormData();
-    if (modelFile) formData.append("model_image", modelFile);
+    if (modelFile) {
+      formData.append("model_image", modelFile);
+    } else if (modelGender !== "any") {
+      formData.append("model_gender", modelGender);
+    }
     formData.append("garment_image", garmentFile);
 
     try {
@@ -214,9 +220,29 @@ function App() {
         </div>
 
         {!showModelSection && (
-          <button type="button" className="link-toggle" onClick={handleToggleModelSection}>
-            + Użyj własnego zdjęcia jako modela (opcjonalnie)
-          </button>
+          <>
+            <div className="gender-picker">
+              {(
+                [
+                  ["any", "Dowolny"],
+                  ["female", "Kobieta"],
+                  ["male", "Mężczyzna"],
+                ] as [ModelGender, string][]
+              ).map(([value, label]) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`gender-option${modelGender === value ? " active" : ""}`}
+                  onClick={() => setModelGender(value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <button type="button" className="link-toggle" onClick={handleToggleModelSection}>
+              + Użyj własnego zdjęcia jako modela (opcjonalnie)
+            </button>
+          </>
         )}
 
         {showModelSection && (

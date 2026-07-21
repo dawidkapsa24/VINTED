@@ -48,10 +48,11 @@ app.post("/api/tryon", async (request, reply) => {
   }
   fal.config({ credentials: env.falKey });
 
-  const { files } = await parseMultipart(request);
+  const { files, fields } = await parseMultipart(request);
 
   const modelFile = files["model_image"];
   const garmentFile = files["garment_image"];
+  const modelGender = fields["model_gender"] === "male" || fields["model_gender"] === "female" ? fields["model_gender"] : undefined;
 
   if (!garmentFile) {
     return reply.status(400).send({
@@ -67,7 +68,7 @@ app.post("/api/tryon", async (request, reply) => {
               type: modelFile.mimetype,
             })
           )
-        : getRandomDefaultModelUrl(),
+        : getRandomDefaultModelUrl(modelGender),
       fal.storage.upload(
         new File([new Uint8Array(garmentFile.buffer)], garmentFile.filename, {
           type: garmentFile.mimetype,
