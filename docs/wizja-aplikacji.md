@@ -155,13 +155,18 @@ generations
    Twoich prawdziwych ubraniach zanim zainwestujesz czas w resztę.
 2. ✅ Zaimplementowane inaczej niż pierwotnie planowano, dwuetapowo:
    - Najpierw: zdjęcie modela zapamiętywane w `localStorage` przeglądarki (bez bazy danych).
-   - Docelowo: **zdjęcie modela jest w pełni opcjonalne**. User wgrywa tylko ubranie;
-     jeśli nie poda własnego zdjęcia modela, backend losuje jedno z 4 wbudowanych
-     zdjęć (`backend/assets/default-models/`, 2 męskie + 2 żeńskie). Zdjęcia są
-     syntetyczne (wygenerowane `fal-ai/flux/schnell`, ~$0.003-0.01/szt.) — nie
-     prawdziwe osoby, więc bez problemu licencyjnego. Upload własnego zdjęcia modela
-     zostaje dostępny za przełącznikiem "Użyj własnego zdjęcia jako modela", z opcją
-     zapamiętania go na kolejne razy.
+   - Docelowo: **zdjęcie modela jest w pełni opcjonalne**. User wgrywa tylko ubranie,
+     opcjonalnie wybiera płeć (Dowolny/Kobieta/Mężczyzna); backend losuje jedno
+     z 4 wbudowanych zdjęć (`backend/assets/default-models/`, 2 męskie + 2 żeńskie,
+     filtrowane po prefiksie nazwy pliku). Zdjęcia są syntetyczne (wygenerowane
+     `fal-ai/flux/dev`, ~28 kroków, jednorazowy koszt rzędu grosza za komplet) — nie
+     prawdziwe osoby, więc bez problemu licencyjnego. Styl: amatorskie selfie z lustra
+     w stylu prawdziwego ogłoszenia z Vinted (telefon przy twarzy, nie zasłania
+     tułowia; jedna spójna rama lustra — `flux/schnell` dawał artefakty typu
+     potrójna rama; wyraźnie oddzielny top + spodenki/legginsy, nigdy sukienka, żeby
+     baza miała sens po podmianie samego topu albo samego dołu). Upload własnego
+     zdjęcia modela zostaje dostępny za przełącznikiem "Użyj własnego zdjęcia jako
+     modela", z opcją zapamiętania go na kolejne razy.
 
 **Faza 3 (baza danych + archiwum) — odłożona na razie**, wraca do tematu gdy będzie
 potrzebna.
